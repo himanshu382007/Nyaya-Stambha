@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Launch Complaint - Nyaya Stambha</title>
+    <meta name="description" content="File a formal legal or public complaint through Nyaya Stambha." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+        /* Wizard / Complaint Flow Styles */
+        body {
+            background: var(--off-white);
+        }
+
+        .complaint-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #112d5e 100%);
+            color: var(--white);
+            padding: 60px 20px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .complaint-header h1 {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .complaint-header p {
+            color: var(--gray-300);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .wizard-container {
+            max-width: 800px;
+            margin: -20px auto 60px;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Progress Tracker */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 10px;
+            right: 10px;
+            height: 4px;
+            background: var(--gray-100);
+            z-index: 1;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 14px;
+            left: 10px;
+            height: 4px;
+            background: var(--accent-gold);
+            z-index: 2;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .step-indicator {
+            width: 32px;
+            height: 32px;
+            background: var(--gray-100);
+            color: var(--gray-500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 3;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .step-indicator.active {
+            background: var(--accent-gold);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(201, 168, 76, 0.4);
+        }
+
+        .step-indicator.completed {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .step-label {
+            position: absolute;
+            top: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media(max-width: 768px) {
+            .step-label {
+                display: none;
+            }
+        }
+
+        /* Step Sections */
+        .wizard-step {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--gray-100);
+            padding-bottom: 12px;
+        }
+
+        /* Grid for Types */
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .type-card {
+            border: 2px solid var(--gray-100);
+            border-radius: var(--radius-sm);
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .type-card:hover {
+            border-color: var(--accent-gold);
+            background: rgba(201, 168, 76, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .type-card.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .type-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group label span {
+            color: var(--gray-400);
+            /* optional text */
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            outline: none;
+            background: var(--white);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Voice Button Injection */
+        .voice-wrapper {
+            position: relative;
+        }
+
+        .voice-btn {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 40px;
+            height: 40px;
+            background: var(--gray-100);
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--primary);
+        }
+
+        .voice-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .voice-btn.recording {
+            background: var(--danger);
+            color: var(--white);
+            animation: pulseRecord 1.5s infinite;
+        }
+
+        @keyframes pulseRecord {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        /* File Upload */
+        .file-dropzone {
+            border: 2px dashed var(--gray-300);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            background: var(--gray-50);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-dropzone:hover {
+            border-color: var(--primary);
+            background: rgba(10, 31, 68, 0.05);
+        }
+
+        /* Checkbox & Sign */
+        .checkbox-wrap {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(201, 168, 76, 0.05);
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            border-radius: var(--radius-sm);
+        }
+
+        .checkbox-wrap input {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-wrap label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .wizard-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(201, 168, 76, 0.3);
+        }
+
+        /* Preview Draft */
+        .draft-preview {
+            background: #fdfdfc;
+            border: 1px solid #e0dbce;
+            border-radius: 4px;
+            padding: 40px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
+            font-family: "Times New Roman", Times, serif;
+            color: #000;
+            position: relative;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .draft-preview::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-image: url('assets/lady-justice.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .draft-preview>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .draft-preview,
+            .draft-preview * {
+                visibility: visible;
+            }
+
+            .draft-preview::before {
+                visibility: visible;
+            }
+
+            .draft-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+                padding: 0;
+                box-shadow: none;
+            }
+        }
+
+        .draft-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 16px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .draft-field {
+            font-weight: bold;
+        }
+
+        .draft-value {
+            color: #333;
+        }
+
+        .draft-divider {
+            height: 1px;
+            background: #ccc;
+            margin: 24px 0;
+        }
+
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--white);
+            z-index: 100;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="index.html" class="back-nav">← Back to Home</a>
+
+    <header class="complaint-header">
+        <h1>Launch A Complaint</h1>
+        <p>File your legal, formal, or public grievance directly to verified authorities safely and securely.</p>
+    </header>
+
+    <main class="wizard-container">
+
+        <!-- Progress Tracker -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-line" id="progressLine"></div>
+
+            <div class="step-indicator active" id="indicator-1">1<div class="step-label">Type</div>
+            </div>
+            <div class="step-indicator" id="indicator-2">2<div class="step-label">Details</div>
+            </div>
+            <div class="step-indicator" id="indicator-3">3<div class="step-label">Incident</div>
+            </div>
+            <div class="step-indicator" id="indicator-4">4<div class="step-label">Accused</div>
+            </div>
+            <div class="step-indicator" id="indicator-5">5<div class="step-label">Sign</div>
+            </div>
+            <div class="step-indicator" id="indicator-6">✓<div class="step-label" style="right:-10px;">Review</div>
+            </div>
+        </div>
+
+        <form id="complaintForm">
+
+            <!-- STEP 1: COMPLAINT TYPE (Section 1) -->
+            <div class="wizard-step active" id="step1">
+                <h2 class="step-title">1. Select Complaint Type</h2>
+                <p style="margin-bottom:20px; color:var(--gray-500);">What kind of complaint are you filing today?</p>
+
+                <div class="type-grid" id="typeGrid">
+                    <div class="type-card" onclick="selectType(this, 'Grievance Complaint')"><span
+                            class="type-icon">📝</span>Grievance Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Legal Complaint')"><span
+                            class="type-icon">⚖️</span>Legal Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Police Complaint (FIR)')"><span
+                            class="type-icon">🚓</span>Police Complaint (FIR)</div>
+                    <div class="type-card" onclick="selectType(this, 'Customer Complaint')"><span
+                            class="type-icon">🛍️</span>Customer Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Workplace Complaint')"><span
+                            class="type-icon">🏢</span>Workplace Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Anonymous Complaint')"><span
+                            class="type-icon">🕵️</span>Anonymous Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Public Complaint')"><span
+                            class="type-icon">📢</span>Public Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Cyber/Online Complaint')"><span
+                            class="type-icon">💻</span>Online/Cyber Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Domestic or Family Complaint')"><span
+                            class="type-icon">🏠</span>Domestic/Family Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Civil Dispute Complaint')"><span
+                            class="type-icon">🤝</span>Civil Dispute Complaint</div>
+                    <div class="type-card" onclick="selectType(this, 'Others')"><span class="type-icon">🤔</span>Others
+                    </div>
+                </div>
+                <div id="otherTypeContainer" style="display:none; margin-top:20px;" class="form-group">
+                    <label>Please specify complaint type</label>
+                    <input type="text" class="form-control" id="otherTypeInput"
+                        placeholder="Describe your complaint type..."
+                        oninput="document.getElementById('complaintType').value = this.value" />
+                </div>
+                <input type="hidden" id="complaintType" required />
+            </div>
+
+            <!-- STEP 2: DETAILS & AUTHORITY (Sections 2 & 3) -->
+            <div class="wizard-step" id="step2">
+                <h2 class="step-title">2. Basic & Authority Details</h2>
+
+                <!-- Section 2 -->
+                <div id="complainantDetailsSection"
+                    style="background:var(--gray-50); padding:20px; border-radius:var(--radius-sm); margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px; font-size:1.1rem; color:var(--primary);">Complainant Details</h3>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:3;">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" id="c_name" placeholder="Enter your full name"
+                                required />
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>Age</label>
+                            <input type="number" class="form-control" id="c_age" placeholder="e.g. 30" min="1" max="120"
+                                required />
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>Identity Relation</label>
+                            <select class="form-control" id="c_parent_type" onchange="document.getElementById('parentLabelText').innerText = this.value + ' Name'" required>
+                                <option value="Father’s">Father’s</option>
+                                <option value="Mother’s">Mother’s</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:2;">
+                            <label id="parentLabelText">Father’s Name</label>
+                            <input type="text" class="form-control" id="c_parent_name" placeholder="Enter parent's full name"
+                                required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Address</label>
+                        <textarea class="form-control" id="c_address" placeholder="Enter complete residential address"
+                            style="min-height:80px;" required></textarea>
+                    </div>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>Mobile Number</label>
+                            <input type="tel" class="form-control" id="c_phone" placeholder="10-digit number"
+                                required />
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>Email Address <span>(Optional)</span></label>
+                            <input type="email" class="form-control" id="c_email" placeholder="example@email.com" />
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top:12px; margin-bottom:12px; font-size:0.95rem; color:var(--primary); border-top:1px solid var(--gray-200); padding-top:16px;">Compulsory ID Proof Details</h4>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>ID Proof Document</label>
+                            <select class="form-control" id="c_id_type" required>
+                                <option value="" disabled selected>Select ID Proof</option>
+                                <option value="Aadhar Card">Aadhar Card</option>
+                                <option value="Voter ID">Voter ID</option>
+                                <option value="PAN Card">PAN Card</option>
+                                <option value="Driving Licence">Driving Licence</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:2;">
+                            <label>ID Proof Number</label>
+                            <input type="text" class="form-control" id="c_id_number" placeholder="Enter corresponding ID Number"
+                                required />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <h3 style="margin-bottom:16px; font-size:1.1rem; color:var(--primary);">Submission Authority</h3>
+                <div style="display:flex; gap:16px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Date of Complaint</label>
+                        <input type="date" class="form-control" id="c_date" required />
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Authority Type</label>
+                        <select class="form-control" id="c_auth_type" onchange="togglePoliceFields()" required>
+                            <option value="" disabled selected>Select Authority</option>
+                            <option value="Police Station">Police Station</option>
+                            <option value="Government Office">Government Office</option>
+                            <option value="Organization">Organization / Corporate</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="policeFields"
+                    style="display:none; padding:16px; border:1px solid var(--info); background:rgba(52,152,219,0.05); border-radius:var(--radius-sm); margin-bottom:20px;">
+                    <h4 style="margin-bottom:12px; font-size:0.95rem; color:var(--info);">Police Details Required</h4>
+                    <div class="form-group">
+                        <label>Police Station Name</label>
+                        <input type="text" class="form-control" id="c_ps_name" placeholder="e.g. Park Street P.S." />
+                    </div>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>District</label>
+                            <input type="text" class="form-control" id="c_ps_district" placeholder="e.g. Kolkata" />
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>State</label>
+                            <input type="text" class="form-control" id="c_ps_state" placeholder="e.g. West Bengal" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: CONTENT & ACTION (Sections 4 & 6) -->
+            <div class="wizard-step" id="step3">
+                <h2 class="step-title">3. Incident Details</h2>
+
+                <!-- Time & Date Bar -->
+                <div style="background:var(--gray-50); padding:16px; border-radius:var(--radius-sm); margin-bottom:20px; border-left:4px solid var(--primary);">
+                    <strong style="display:block; font-size:0.95rem; color:var(--primary); margin-bottom:12px;">Time and Date of Occurrence</strong>
+                    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:180px;">
+                            <label>Exact Date of Occurrence</label>
+                            <input type="date" class="form-control" id="c_occ_date" required />
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:180px;">
+                            <label>Approximate or Exact Time</label>
+                            <input type="time" class="form-control" id="c_occ_time" required />
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:180px;">
+                            <label>Duration <span>(if relevant)</span></label>
+                            <input type="text" class="form-control" id="c_occ_duration" placeholder="e.g. 2 hours / ongoing" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location of Occurrence Bar -->
+                <div style="background:var(--gray-50); padding:16px; border-radius:var(--radius-sm); margin-bottom:20px; border-left:4px solid var(--info);">
+                    <strong style="display:block; font-size:0.95rem; color:var(--info); margin-bottom:12px;">Location of Occurrence</strong>
+                    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+                        <div class="form-group" style="flex:2; min-width:200px;">
+                            <label>House Number / Street</label>
+                            <input type="text" class="form-control" id="c_occ_street" placeholder="Enter house no., building, or street name" required />
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:150px;">
+                            <label>Village / City</label>
+                            <input type="text" class="form-control" id="c_occ_city" placeholder="Enter village or city" required />
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:180px;">
+                            <label>Police Station Jurisdiction</label>
+                            <input type="text" class="form-control" id="c_occ_ps" placeholder="e.g. Local P.S. Name" required />
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:180px;">
+                            <label>Nearby Landmarks <span>(Optional)</span></label>
+                            <input type="text" class="form-control" id="c_occ_landmark" placeholder="e.g. Opposite Metro Station" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="form-group">
+                    <label>One-Line Summary</label>
+                    <input type="text" class="form-control" id="c_summary"
+                        placeholder="e.g. Cyber fraud resulting in financial loss" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Detailed Description</label>
+                    <p style="font-size:0.8rem; color:var(--gray-500); margin-bottom:8px;">Please explain what happened,
+                        when it happened, who was involved, and note any witnesses.</p>
+                    <div class="voice-wrapper">
+                        <textarea class="form-control" id="c_desc" placeholder="Begin typing or use voice dictation..."
+                            required></textarea>
+                        <button type="button" class="voice-btn" id="micBtn" onclick="toggleMic()"
+                            title="Voice Dictation">🎤</button>
+                    </div>
+                </div>
+
+                <!-- Section 6 -->
+                <div class="form-group" style="margin-top:32px;">
+                    <h3 style="margin-bottom:12px; font-size:1.1rem; color:var(--primary);">Desired Action</h3>
+                    <label>What action do you want to be taken by the authority?</label>
+                    <select class="form-control" id="c_action" required>
+                        <option value="" disabled selected>Select Desired Action</option>
+                        <option value="Police Investigation (FIR)">Police Investigation (FIR)</option>
+                        <option value="Legal Action / File Suit">Legal Action / File Lawsuit</option>
+                        <option value="Financial Compensation">Financial Compensation / Refund</option>
+                        <option value="Warning or Official Notice">Issue Warning / Official Notice</option>
+                        <option value="Other">Other / Request Assessment</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- STEP 4: ACCUSED & WITNESS DETAILS -->
+            <div class="wizard-step" id="step4">
+                <h2 class="step-title">4. Accused & Witness Details</h2>
+
+                <!-- Suspect Choice Block -->
+                <div class="form-group" style="background:var(--gray-50); padding:16px; border-radius:var(--radius-sm); margin-bottom:24px;">
+                    <label style="font-size:1.05rem; color:var(--primary);">Do you suspect a specific individual or entity?</label>
+                    <div style="display:flex; gap:24px; margin-top:12px;">
+                        <label style="font-weight:600; cursor:pointer;"><input type="radio" name="c_suspect_choice" value="Yes" onclick="toggleSuspectView(true)" /> Yes, I know the suspect</label>
+                        <label style="font-weight:600; cursor:pointer;"><input type="radio" name="c_suspect_choice" value="No" onclick="toggleSuspectView(false)" checked /> No, unknown suspect</label>
+                    </div>
+                </div>
+
+                <!-- Known Suspect Container -->
+                <div id="knownSuspectContainer" style="display:none; border-left:4px solid var(--primary); padding-left:16px; margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px; font-size:1.05rem; color:var(--primary);">Suspect Profile Details</h3>
+                    <div class="form-group">
+                        <label>Suspect Full Name</label>
+                        <input type="text" class="form-control" id="c_susp_name" placeholder="Enter suspect name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Address <span>(if available)</span></label>
+                        <input type="text" class="form-control" id="c_susp_address" placeholder="Enter suspect address" />
+                    </div>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>Phone Number <span>(if available)</span></label>
+                            <input type="text" class="form-control" id="c_susp_phone" placeholder="Enter suspect phone" />
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>Vehicle Number <span>(if available)</span></label>
+                            <input type="text" class="form-control" id="c_susp_vehicle" placeholder="e.g. DL-01-AB-1234" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Physical Description</label>
+                        <input type="text" class="form-control" id="c_susp_desc" placeholder="Height, built, prominent marks, apparel, etc." />
+                    </div>
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>Social Media IDs <span>(if available)</span></label>
+                            <input type="text" class="form-control" id="c_susp_social" placeholder="Instagram, Facebook, or Twitter handles" />
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>Relationship with Complainant</label>
+                            <input type="text" class="form-control" id="c_susp_relation" placeholder="e.g. Neighbor, colleague, stranger, etc." />
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:12px;">
+                        <label>Suspect Photo <span>(if available)</span></label>
+                        <label class="file-dropzone" for="c_susp_photo" style="padding:12px;">
+                            <span style="font-size:1.2rem; margin-bottom:4px; display:block;">📸</span>
+                            <strong>Upload Suspect Photo</strong>
+                            <input type="file" id="c_susp_photo" style="display:none;" accept=".jpg,.jpeg,.png" onchange="showFileName(this, 'susp_photo_label')" />
+                            <div id="susp_photo_label" style="margin-top:6px; color:var(--primary); font-size:0.85rem; font-weight:600;"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Unknown Suspect Container -->
+                <div id="unknownSuspectContainer" style="display:block; border-left:4px solid var(--warning); padding-left:16px; margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px; font-size:1.05rem; color:var(--warning-dark, #d35400);">Behavior Profile & Physical Identifiers</h3>
+                    <div class="form-group">
+                        <label>Behavior towards the Citizen</label>
+                        <input type="text" class="form-control" id="c_susp_behavior" placeholder="Describe aggressive, coercive, or suspicious behavior noticed" />
+                    </div>
+                    <div class="form-group">
+                        <label>Noticed Physical Descriptions & Circumstantial Details</label>
+                        <textarea class="form-control" id="c_susp_unknown_desc" placeholder="Describe voice accents, built, height estimates, mask worn, accomplices, or getaway routes noticed..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Witness Module Block -->
+                <div class="form-group" style="border-top:1px solid var(--gray-200); padding-top:24px;">
+                    <h3 style="margin-bottom:12px; font-size:1.1rem; color:var(--primary);">Witness Information</h3>
+                    <label style="font-size:1.05rem;">Are there any witnesses to the incident?</label>
+                    <div style="display:flex; gap:24px; margin-top:8px; margin-bottom:16px;">
+                        <label style="font-weight:600; cursor:pointer;"><input type="radio" name="c_witness_choice" value="Yes" onclick="toggleWitnessView(true)" /> Yes</label>
+                        <label style="font-weight:600; cursor:pointer;"><input type="radio" name="c_witness_choice" value="No" onclick="toggleWitnessView(false)" checked /> No</label>
+                    </div>
+                    <div id="witnessDetailsContainer" style="display:none;">
+                        <label>Mention Names and Contact Details of Witnesses</label>
+                        <textarea class="form-control" id="c_witness_details" placeholder="1. Witness Name, Phone Number, Address&#10;2. Another Witness Name, Contact info..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: EVIDENCE, SIGNATURE & DECLARATION -->
+            <div class="wizard-step" id="step5">
+                <h2 class="step-title">5. Evidence & Signature</h2>
+
+                <!-- Section 5: Citizen Photo Upload -->
+                <div class="form-group" id="citizenPhotoUploadGroup">
+                    <label style="font-size:1.05rem;">Complainant Passport Photo <span>(Required: JPG, PNG)</span></label>
+                    <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:12px;">Upload a clear passport-size photograph of the citizen for official records.</p>
+                    <label class="file-dropzone" for="c_photo" style="padding:20px;">
+                        <span style="font-size:1.6rem; margin-bottom:8px; display:block;">👤</span>
+                        <strong>Upload Citizen Photo</strong>
+                        <input type="file" id="c_photo" style="display:none;" accept=".jpg,.jpeg,.png" required
+                            onchange="showFileName(this, 'photo_label')" />
+                        <div id="photo_label"
+                            style="margin-top:10px; color:var(--primary); font-size:0.9rem; font-weight:600;"></div>
+                    </label>
+                </div>
+
+                <!-- Section 5: Evidence Upload -->
+                <div class="form-group" style="margin-top:32px;">
+                    <label style="font-size:1.05rem;">Upload Evidence <span>(PDF, JPG, PNG, DOC)</span></label>
+                    <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:12px;">Upload any proof,
+                        screenshots, documents, or photos related to your complaint.</p>
+                    <label class="file-dropzone" for="c_evidence">
+                        <span style="font-size:2rem; margin-bottom:10px; display:block;">📁</span>
+                        <strong>Click to upload evidence</strong> or drag files here.
+                        <input type="file" id="c_evidence" style="display:none;" multiple
+                            accept=".pdf,.doc,.docx,.jpg,.png" onchange="showFileName(this, 'ev_label')" />
+                        <div id="ev_label"
+                            style="margin-top:10px; color:var(--primary); font-size:0.9rem; font-weight:600;"></div>
+                    </label>
+                </div>
+
+                <!-- Section 8: Signature Upload -->
+                <div class="form-group" style="margin-top:32px;">
+                    <label style="font-size:1.05rem;">Digital Signature <span>(Required: JPG, PNG)</span></label>
+                    <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:12px;">Upload a clear photo or
+                        scanned copy of your signature to authenticate this document.</p>
+                    <label class="file-dropzone" for="c_sign" style="padding:20px;">
+                        <span style="font-size:1.6rem; margin-bottom:8px; display:block;">✍️</span>
+                        <strong>Upload Signature</strong>
+                        <input type="file" id="c_sign" style="display:none;" accept=".jpg,.jpeg,.png" required
+                            onchange="showFileName(this, 'sign_label')" />
+                        <div id="sign_label"
+                            style="margin-top:10px; color:var(--primary); font-size:0.9rem; font-weight:600;"></div>
+                    </label>
+                </div>
+
+                <!-- Section 7 -->
+                <div class="checkbox-wrap">
+                    <input type="checkbox" id="c_declare" required />
+                    <label for="c_declare">
+                        <strong>Mandatory Declaration:</strong> I confirm that all the information provided by me is
+                        true and authentic. I understand that any false, misleading, or unlawful information provided
+                        will be my sole responsibility and may invite legal consequences.
+                    </label>
+                </div>
+            </div>
+
+            <!-- STEP 6: PREVIEW & ACKNOWLEDGEMENT (Section 9) -->
+            <div class="wizard-step" id="step6">
+                <div style="text-align:center; margin-bottom:24px;">
+                    <div style="font-size:3rem; margin-bottom:10px;">✅</div>
+                    <h2 style="font-family:var(--font-display); color:var(--success); font-size:2rem;">Draft Generated
+                        Successfully</h2>
+                    <p style="color:var(--gray-500);">Please review your official compliant draft below before
+                        generating the final PDF.</p>
+                </div>
+
+                <div class="draft-preview" id="draftContent">
+                    <!-- Top Header Row with Title and Citizen Photo Square Box -->
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px;">
+                        <div style="flex:1; text-align:center; text-decoration:underline; font-weight:bold; font-size:1.3rem; text-transform:uppercase; padding-top:10px;" id="d_title">Formal Complaint</div>
+                        <div style="width:100px; height:120px; border:2px solid #333; background:#fcfcfc; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; padding:2px; box-sizing:border-box;" id="d_citizen_photo_box">
+                            <span style="font-size:0.65rem; color:#888; display:block;">[Complainant<br/>Photo]</span>
+                        </div>
+                    </div>
+
+                    <div class="draft-grid">
+                        <div class="draft-field">Complaint ID:</div>
+                        <div class="draft-value" id="d_id">NYA-CMP-20260417</div>
+
+                        <div class="draft-field">Date of Submission:</div>
+                        <div class="draft-value" id="d_date"></div>
+
+                        <div class="draft-field">To Authority:</div>
+                        <div class="draft-value" id="d_auth"></div>
+                    </div>
+
+                    <div class="draft-divider"></div>
+
+                    <div class="draft-grid">
+                        <div class="draft-field">Complainant Name:</div>
+                        <div class="draft-value" id="d_name"></div>
+
+                        <div class="draft-field">Age:</div>
+                        <div class="draft-value" id="d_age"></div>
+
+                        <div class="draft-field" id="d_parent_label">Parent's Name:</div>
+                        <div class="draft-value" id="d_parent_name"></div>
+
+                        <div class="draft-field">Contact Info:</div>
+                        <div class="draft-value" id="d_contact"></div>
+
+                        <div class="draft-field">Address:</div>
+                        <div class="draft-value" id="d_address"></div>
+
+                        <div class="draft-field">Verified ID Proof:</div>
+                        <div class="draft-value" id="d_id_proof"></div>
+                    </div>
+
+                    <div class="draft-divider"></div>
+
+                    <div class="draft-grid" style="grid-template-columns: 140px 1fr; margin-bottom:16px;">
+                        <div class="draft-field">Occurrence Date:</div>
+                        <div class="draft-value" id="d_occ_date"></div>
+
+                        <div class="draft-field">Occurrence Time:</div>
+                        <div class="draft-value" id="d_occ_time"></div>
+
+                        <div class="draft-field">Duration:</div>
+                        <div class="draft-value" id="d_occ_duration"></div>
+
+                        <div class="draft-field">Street / House:</div>
+                        <div class="draft-value" id="d_occ_street"></div>
+
+                        <div class="draft-field">Village / City:</div>
+                        <div class="draft-value" id="d_occ_city"></div>
+
+                        <div class="draft-field">P.S. Jurisdiction:</div>
+                        <div class="draft-value" id="d_occ_ps"></div>
+
+                        <div class="draft-field">Nearby Landmark:</div>
+                        <div class="draft-value" id="d_occ_landmark"></div>
+                    </div>
+
+                    <div class="draft-divider"></div>
+
+                    <div style="margin-bottom:16px;">
+                        <strong style="font-size:1.1rem; display:block; margin-bottom:8px;">Subject / Summary:</strong>
+                        <div id="d_summary"></div>
+                    </div>
+
+                    <div style="margin-bottom:24px;">
+                        <strong style="font-size:1.1rem; display:block; margin-bottom:8px;">Detailed
+                            Description:</strong>
+                        <div id="d_desc" style="white-space:pre-wrap; line-height:1.6;"></div>
+                    </div>
+
+                    <div style="margin-bottom:24px;">
+                        <strong style="font-size:1.1rem; display:block; margin-bottom:8px;">Desired Action:</strong>
+                        <div id="d_action"></div>
+                    </div>
+
+                    <div class="draft-divider"></div>
+
+                    <!-- Accused / Suspect Module Preview Block -->
+                    <div style="margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                            <strong style="font-size:1.1rem; color:var(--primary);">Accused / Suspect Details:</strong>
+                            <!-- Optional Suspect Thumbnail Box -->
+                            <div id="d_susp_photo_box" style="width:70px; height:80px; border:1px solid #aaa; background:#fff; display:none; align-items:center; justify-content:center; overflow:hidden;"></div>
+                        </div>
+                        <div class="draft-grid" id="d_known_susp_grid" style="grid-template-columns: 140px 1fr; display:none;">
+                            <div class="draft-field">Name:</div>
+                            <div class="draft-value" id="d_susp_name"></div>
+
+                            <div class="draft-field">Address:</div>
+                            <div class="draft-value" id="d_susp_address"></div>
+
+                            <div class="draft-field">Phone:</div>
+                            <div class="draft-value" id="d_susp_phone"></div>
+
+                            <div class="draft-field">Vehicle No:</div>
+                            <div class="draft-value" id="d_susp_vehicle"></div>
+
+                            <div class="draft-field">Description:</div>
+                            <div class="draft-value" id="d_susp_desc"></div>
+
+                            <div class="draft-field">Social Media:</div>
+                            <div class="draft-value" id="d_susp_social"></div>
+
+                            <div class="draft-field">Relation:</div>
+                            <div class="draft-value" id="d_susp_relation"></div>
+                        </div>
+                        <div id="d_unknown_susp_block" style="display:block;">
+                            <div style="margin-bottom:8px;">
+                                <strong style="font-size:0.9rem; color:#666;">Behavior towards Citizen:</strong>
+                                <div id="d_susp_behavior" style="margin-top:4px;"></div>
+                            </div>
+                            <div>
+                                <strong style="font-size:0.9rem; color:#666;">Noticed Identifiers & Details:</strong>
+                                <div id="d_susp_unknown_desc" style="white-space:pre-wrap; margin-top:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="draft-divider"></div>
+
+                    <!-- Witness Profiles Block -->
+                    <div style="margin-bottom:24px;">
+                        <strong style="font-size:1.1rem; display:block; margin-bottom:8px;">Witness Information:</strong>
+                        <div id="d_witness_block" style="white-space:pre-wrap; line-height:1.6;"></div>
+                    </div>
+
+                    <div style="margin-top:50px; display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid #eee; padding-top:24px;">
+                        <!-- Left side: Uploaded Document / Evidence Square Preview -->
+                        <div style="text-align:left;">
+                            <strong style="font-size:0.85rem; display:block; margin-bottom:6px; color:#555;">Attached Document Preview</strong>
+                            <div id="d_evidence_preview" style="width:100px; height:100px; border:1px solid #ccc; border-radius:4px; background:#fdfdfd; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4px; text-align:center; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                                <span style="font-size:1.8rem; color:#bbb; display:block; line-height:1;">📄</span>
+                                <span style="font-size:0.65rem; color:#888; margin-top:4px; display:block; word-break:break-all; line-height:1.2;">None</span>
+                            </div>
+                        </div>
+
+                        <!-- Right side: Signature Preview in Square Box -->
+                        <div style="text-align:center; width:220px;">
+                            <div id="d_signature_preview" style="width:160px; height:60px; margin:0 auto 10px; background:rgba(0,0,0,0.03); border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:2px; box-sizing:border-box;">
+                                <span style="font-size:0.65rem; color:#888;">[Signature]</span>
+                            </div>
+                            <p style="color:#555; margin-bottom:4px;">-------------------------</p>
+                            <p style="font-weight:600; font-size:0.95rem; color:#333;">Complainant's Signature</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wizard Navigation -->
+            <div class="wizard-footer" id="wizardControls">
+                <button type="button" class="btn btn-secondary" id="btnPrev" onclick="nextStep(-1)"
+                    style="display:none;">Back</button>
+                <button type="button" class="btn btn-primary" id="btnNext" onclick="handleNextClick()"
+                    style="margin-left:auto;">Proceed to Details →</button>
+            </div>
+
+            <!-- Print/Download Controls (Section 9) -->
+            <div class="wizard-footer" id="finalControls" style="display:none; justify-content:center; gap:16px;">
+                <button type="button" class="btn btn-secondary" onclick="nextStep(-1)">✏️ Edit Information</button>
+                <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ Print Document</button>
+                <button type="button" class="btn btn-primary" onclick="alert('PDF Downloaded!')">⬇️ Download
+                    PDF</button>
+                <button type="button" class="btn btn-primary"
+                    onclick="alert('Successfully Submitted to Authority!'); window.location.href='index.html';"
+                    style="background:var(--success); color:white;">🚀 Final Submit</button>
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        // Set today's date automatically
+        document.getElementById('c_date').valueAsDate = new Date();
+
+        // Select Complaint Type (Step 1)
+        function selectType(card, typeValue) {
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+
+            const compSection = document.getElementById('complainantDetailsSection');
+            if (typeValue === 'Anonymous Complaint') {
+                if (compSection) compSection.style.display = 'none';
+                document.getElementById('c_name').required = false;
+                document.getElementById('c_address').required = false;
+                document.getElementById('c_phone').required = false;
+                document.getElementById('c_age').required = false;
+                document.getElementById('c_parent_name').required = false;
+                document.getElementById('c_id_number').required = false;
+                document.getElementById('c_id_type').required = false;
+            } else {
+                if (compSection) compSection.style.display = 'block';
+                document.getElementById('c_name').required = true;
+                document.getElementById('c_address').required = true;
+                document.getElementById('c_phone').required = true;
+                document.getElementById('c_age').required = true;
+                document.getElementById('c_parent_name').required = true;
+                document.getElementById('c_id_number').required = true;
+                document.getElementById('c_id_type').required = true;
+            }
+
+            if (typeValue === 'Others') {
+                document.getElementById('otherTypeContainer').style.display = 'block';
+                document.getElementById('otherTypeInput').required = true;
+                document.getElementById('complaintType').value = document.getElementById('otherTypeInput').value;
+            } else {
+                document.getElementById('otherTypeContainer').style.display = 'none';
+                document.getElementById('otherTypeInput').required = false;
+                document.getElementById('complaintType').value = typeValue;
+
+                // Auto-advance if they pick one
+                setTimeout(() => {
+                    if (currentStep === 1) nextStep(1);
+                }, 300);
+            }
+        }
+
+        // Toggle conditional Police fields (Step 2)
+        function togglePoliceFields() {
+            const type = document.getElementById('c_auth_type').value;
+            const psDiv = document.getElementById('policeFields');
+            if (type === 'Police Station') {
+                psDiv.style.display = 'block';
+                document.getElementById('c_ps_name').required = true;
+            } else {
+                psDiv.style.display = 'none';
+                document.getElementById('c_ps_name').required = false;
+            }
+        }
+
+        // Toggle Suspect options view (Step 4)
+        function toggleSuspectView(isKnown) {
+            const knownDiv = document.getElementById('knownSuspectContainer');
+            const unknownDiv = document.getElementById('unknownSuspectContainer');
+            if (isKnown) {
+                knownDiv.style.display = 'block';
+                unknownDiv.style.display = 'none';
+            } else {
+                knownDiv.style.display = 'none';
+                unknownDiv.style.display = 'block';
+            }
+        }
+
+        // Toggle Witness input view (Step 4)
+        function toggleWitnessView(hasWitness) {
+            document.getElementById('witnessDetailsContainer').style.display = hasWitness ? 'block' : 'none';
+        }
+
+        function showFileName(input, labelId) {
+            if (input.files && input.files.length > 0) {
+                let names = Array.from(input.files).map(f => f.name).join(', ');
+                document.getElementById(labelId).innerText = names;
+            } else {
+                document.getElementById(labelId).innerText = "";
+            }
+        }
+
+        function validateCurrentStep() {
+            const currentView = document.getElementById(`step${currentStep}`);
+            const inputs = currentView.querySelectorAll('input[required], textarea[required], select[required]');
+            let isValid = true;
+
+            if (currentStep === 1 && !document.getElementById('complaintType').value) {
+                alert("Please select a complaint type to proceed.");
+                return false;
+            }
+
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    isValid = false;
+                }
+            });
+            return isValid;
+        }
+
+        function handleNextClick() {
+            if (validateCurrentStep()) nextStep(1);
+        }
+
+        function nextStep(dir) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            currentStep += dir;
+
+            // Update Progress Bar
+            const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressLine').style.width = progressPercent + '%';
+
+            // Update Step Indicators
+            for (let i = 1; i <= totalSteps; i++) {
+                const ind = document.getElementById(`indicator-${i}`);
+                ind.classList.remove('active', 'completed');
+                if (i < currentStep) ind.classList.add('completed');
+                if (i === currentStep) ind.classList.add('active');
+            }
+
+            if (currentStep === totalSteps) {
+                generateDraftPreview();
+                document.getElementById('wizardControls').style.display = 'none';
+                document.getElementById('finalControls').style.display = 'flex';
+            } else {
+                document.getElementById('wizardControls').style.display = 'flex';
+                document.getElementById('finalControls').style.display = 'none';
+            }
+
+            // Button states
+            document.getElementById('btnPrev').style.display = currentStep > 1 ? 'block' : 'none';
+            if (currentStep === 5) {
+                document.getElementById('btnNext').innerText = "Generate Final Draft";
+            } else {
+                document.getElementById('btnNext').innerText = "Proceed to Next part →";
+            }
+
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function generateDraftPreview() {
+            const type = document.getElementById('complaintType').value;
+            document.getElementById('d_title').innerText = type;
+
+            document.getElementById('d_date').innerText = document.getElementById('c_date').value;
+
+            let authStr = document.getElementById('c_auth_type').value;
+            if (authStr === 'Police Station') {
+                authStr += ` - ${document.getElementById('c_ps_name').value}, ${document.getElementById('c_ps_district').value}, ${document.getElementById('c_ps_state').value}`;
+            }
+            document.getElementById('d_auth').innerText = authStr;
+
+            if (type === 'Anonymous Complaint') {
+                document.getElementById('d_name').innerText = "Anonymous";
+                document.getElementById('d_age').innerText = "N/A";
+                document.getElementById('d_parent_label').innerText = "Parent's Name:";
+                document.getElementById('d_parent_name').innerText = "Not Provided";
+                document.getElementById('d_address').innerText = "Not Provided";
+                document.getElementById('d_contact').innerText = "Not Provided";
+                document.getElementById('d_id_proof').innerText = "Protected / Anonymous";
+            } else {
+                document.getElementById('d_name').innerText = document.getElementById('c_name').value;
+                document.getElementById('d_age').innerText = document.getElementById('c_age').value + " years";
+                const pType = document.getElementById('c_parent_type').value;
+                document.getElementById('d_parent_label').innerText = pType + " Name:";
+                document.getElementById('d_parent_name').innerText = document.getElementById('c_parent_name').value;
+                document.getElementById('d_address').innerText = document.getElementById('c_address').value;
+                let email = document.getElementById('c_email').value;
+                document.getElementById('d_contact').innerText = `Phone: ${document.getElementById('c_phone').value} ${email ? '| Email: ' + email : ''}`;
+                const idType = document.getElementById('c_id_type').value;
+                const idNum = document.getElementById('c_id_number').value;
+                document.getElementById('d_id_proof').innerText = `${idType} (${idNum})`;
+            }
+
+            document.getElementById('d_occ_date').innerText = document.getElementById('c_occ_date').value || "Not Provided";
+            document.getElementById('d_occ_time').innerText = document.getElementById('c_occ_time').value || "Not Provided";
+            document.getElementById('d_occ_duration').innerText = document.getElementById('c_occ_duration').value || "N/A";
+
+            document.getElementById('d_occ_street').innerText = document.getElementById('c_occ_street').value || "Not Provided";
+            document.getElementById('d_occ_city').innerText = document.getElementById('c_occ_city').value || "Not Provided";
+            document.getElementById('d_occ_ps').innerText = document.getElementById('c_occ_ps').value || "Not Provided";
+            document.getElementById('d_occ_landmark').innerText = document.getElementById('c_occ_landmark').value || "None";
+
+            document.getElementById('d_summary').innerText = document.getElementById('c_summary').value;
+            document.getElementById('d_desc').innerText = document.getElementById('c_desc').value;
+            document.getElementById('d_action').innerText = document.getElementById('c_action').value;
+
+            // Suspect Mapping Logic
+            const suspChoice = document.querySelector('input[name="c_suspect_choice"]:checked');
+            const isKnown = suspChoice && suspChoice.value === 'Yes';
+            const knownGrid = document.getElementById('d_known_susp_grid');
+            const unknownBlock = document.getElementById('d_unknown_susp_block');
+            const suspPhotoBox = document.getElementById('d_susp_photo_box');
+
+            if (isKnown) {
+                knownGrid.style.display = 'grid';
+                unknownBlock.style.display = 'none';
+                document.getElementById('d_susp_name').innerText = document.getElementById('c_susp_name').value || "Not Provided";
+                document.getElementById('d_susp_address').innerText = document.getElementById('c_susp_address').value || "Not Provided";
+                document.getElementById('d_susp_phone').innerText = document.getElementById('c_susp_phone').value || "Not Provided";
+                document.getElementById('d_susp_vehicle').innerText = document.getElementById('c_susp_vehicle').value || "None";
+                document.getElementById('d_susp_desc').innerText = document.getElementById('c_susp_desc').value || "None";
+                document.getElementById('d_susp_social').innerText = document.getElementById('c_susp_social').value || "None";
+                document.getElementById('d_susp_relation').innerText = document.getElementById('c_susp_relation').value || "None";
+
+                // Handle Optional Suspect Thumbnail Preview
+                const suspPhotoInput = document.getElementById('c_susp_photo');
+                if (suspPhotoInput && suspPhotoInput.files && suspPhotoInput.files.length > 0) {
+                    const sFile = suspPhotoInput.files[0];
+                    const sReader = new FileReader();
+                    sReader.onload = function(e) {
+                        suspPhotoBox.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;" alt="Suspect Thumbnail" />`;
+                        suspPhotoBox.style.display = 'flex';
+                    };
+                    sReader.readAsDataURL(sFile);
+                } else {
+                    suspPhotoBox.style.display = 'none';
+                    suspPhotoBox.innerHTML = '';
+                }
+            } else {
+                knownGrid.style.display = 'none';
+                unknownBlock.style.display = 'block';
+                suspPhotoBox.style.display = 'none';
+                document.getElementById('d_susp_behavior').innerText = document.getElementById('c_susp_behavior').value || "Not Provided";
+                document.getElementById('d_susp_unknown_desc').innerText = document.getElementById('c_susp_unknown_desc').value || "None";
+            }
+
+            // Witness Information Mapping Logic
+            const witChoice = document.querySelector('input[name="c_witness_choice"]:checked');
+            const hasWit = witChoice && witChoice.value === 'Yes';
+            const witBlock = document.getElementById('d_witness_block');
+            if (hasWit) {
+                witBlock.innerText = document.getElementById('c_witness_details').value || "No detailed names/contacts provided.";
+            } else {
+                witBlock.innerText = "No supporting witnesses reported.";
+            }
+
+            // Handle Evidence Preview in Square
+            const evInput = document.getElementById('c_evidence');
+            const evPreview = document.getElementById('d_evidence_preview');
+            if (evInput && evInput.files && evInput.files.length > 0) {
+                const file = evInput.files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        evPreview.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;" alt="Evidence Preview" />`;
+                        evPreview.style.padding = "0";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    evPreview.innerHTML = `
+                        <span style="font-size:1.8rem; color:#3498db; display:block; line-height:1;">📄</span>
+                        <span style="font-size:0.65rem; color:#333; margin-top:4px; display:block; word-break:break-all; line-height:1.2; font-weight:bold;">${file.name}</span>
+                    `;
+                    evPreview.style.padding = "4px";
+                }
+            } else {
+                evPreview.innerHTML = `
+                    <span style="font-size:1.8rem; color:#bbb; display:block; line-height:1;">📄</span>
+                    <span style="font-size:0.65rem; color:#888; margin-top:4px; display:block; word-break:break-all; line-height:1.2;">None</span>
+                `;
+                evPreview.style.padding = "4px";
+            }
+
+            // Handle Signature Preview in Square Box
+            const signInput = document.getElementById('c_sign');
+            const signPreview = document.getElementById('d_signature_preview');
+            if (signInput && signInput.files && signInput.files.length > 0) {
+                const file = signInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    signPreview.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;" alt="Signature" />`;
+                    signPreview.style.border = "1px solid #2c3e50";
+                    signPreview.style.background = "transparent";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                signPreview.innerHTML = `<span style="font-size:0.65rem; color:#888;">[Signature]</span>`;
+                signPreview.style.border = "1px dashed #ccc";
+                signPreview.style.background = "rgba(0,0,0,0.03)";
+            }
+
+            // Handle Citizen Photo Preview in Top Right Square Box
+            const photoInput = document.getElementById('c_photo');
+            const photoPreviewBox = document.getElementById('d_citizen_photo_box');
+            if (photoInput && photoInput.files && photoInput.files.length > 0) {
+                const file = photoInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoPreviewBox.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;" alt="Complainant Photo" />`;
+                    photoPreviewBox.style.padding = "0";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (type === 'Anonymous Complaint') {
+                    photoPreviewBox.innerHTML = `<span style="font-size:0.65rem; color:#888; display:block;">[Anonymous]</span>`;
+                } else {
+                    photoPreviewBox.innerHTML = `<span style="font-size:0.65rem; color:#888; display:block;">[Complainant<br/>Photo]</span>`;
+                }
+                photoPreviewBox.style.padding = "2px";
+            }
+        }
+
+        // Voice Input Mock
+        function toggleMic() {
+            const btn = document.getElementById('micBtn');
+            const box = document.getElementById('c_desc');
+            if (btn.classList.contains('recording')) {
+                btn.classList.remove('recording');
+                box.placeholder = "Begin typing or use voice dictation...";
+            } else {
+                btn.classList.add('recording');
+                box.placeholder = "Listening... Speak now...";
+                // Mock recording text append after 3 seconds
+                setTimeout(() => {
+                    if (btn.classList.contains('recording')) {
+                        if (box.value.length > 0) box.value += " ";
+                        box.value += "The opposing party failed to deliver the promised services despite receiving full compensation on March 1st. I request urgent legal intervention.";
+                        toggleMic();
+                    }
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+
+</html>

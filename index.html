@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nyaya Stambha – AI-Powered Legal Assistance Platform</title>
+  <meta name="description"
+    content="Nyaya Stambha connects citizens seeking legal help with verified lawyers using AI-powered case classification and intelligent matching." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-logo" onclick="navigateTo('home')">
+        <div class="logo-icon">⚖</div>
+        <span>Nyaya <span class="logo-accent">Stambha</span></span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#" data-page="home" data-i18n="navHome">Home</a>
+        <a href="#" data-page="how-it-works" data-i18n="navHow">How It Works</a>
+        <a href="#" data-page="get-help" data-i18n="navHelp">Get Help</a>
+        <a href="complaint-launch.html" data-i18n="navComplaint">Launch Complaint</a>
+        <a href="#" data-page="blog" data-i18n="navBlog">Blog</a>
+        <a href="#" data-page="faq" data-i18n="navFaq">FAQ</a>
+        <a href="login.html" data-i18n="navLogin" class="nav-cta">Login</a>
+      </div>
+      <button class="lang-toggle" onclick="setLanguage(currentLang === 'en' ? 'bn' : 'en')">বাংলা</button>
+      <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HOME PAGE ===== -->
+  <div class="page active" id="page-home">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid main-hero" id="mainHeroGrid">
+          <div class="hero-content">
+            <div class="hero-badge">
+              <div class="dot glow"></div><span data-i18n="heroTagVoice">Voice-First AI Legal Platform</span>
+            </div>
+            <h1>
+              <span data-i18n="heroTitle1Voice">Speak Your Truth.</span><br />
+              <span class="gold" data-i18n="heroTitle2Voice">Find Your Justice.</span>
+            </h1>
+            <p data-i18n="heroDescVoice">The law shouldn't be complicated. We provide legal aid for every citizen. Tap
+              the glowing microphone or <strong>upload your written problem</strong> to get started. Our AI handles the
+              rest.</p>
+
+            <div class="hero-dynamic-text" id="heroDynamicText">Tap the microphone to start speaking</div>
+
+            <!-- Added Portal Role Buttons -->
+            <div class="hero-role-buttons" style="display:flex; gap:16px; margin-top:12px; flex-wrap:wrap;">
+              <button class="btn-portal-role citizen" onclick="handlePortalClick('citizen')" title="Access Citizen Features">
+                <span class="portal-btn-icon">👤</span> As Citizen
+              </button>
+              <button class="btn-portal-role advocate" onclick="handlePortalClick('advocate')" title="Access Advocate Dashboard & Workspace">
+                <span class="portal-btn-icon">👨‍⚖️</span> As Advocate
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-visual voice-centered">
+            <div
+              style="position: relative; width: 360px; height: 360px; border-radius: 50%; border: 4px dashed #b68e00; margin: 80px auto 100px;">
+              <!-- Central Artwork -->
+              <img src="assets/lady-justice.png" alt="Lady Justice"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: auto; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(182, 142, 0, 0.4)); z-index: 5;">
+
+              <!-- Central Voice Orb (Top-Left) -->
+              <div class="voice-orb-container" id="heroVoiceOrb"
+                style="position: absolute; top: 15%; left: 15%; transform: translate(-50%, -50%); z-index: 10;">
+                <div class="waveform-canvas-container" id="waveformContainer"></div>
+                <div class="pulse-ring pulse-1"></div>
+                <div class="pulse-ring pulse-2"></div>
+                <div class="pulse-ring pulse-3"></div>
+
+                <div class="massive-mic-btn" id="heroMicBtn" onclick="toggleHeroMic()"
+                  style="width: 140px; height: 140px; font-size: 3rem; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+                  <span class="mic-icon">🎤</span>
+                </div>
+              </div>
+
+              <!-- Upload Orb (Top-Right) -->
+              <label title="Upload Document" class="voice-orb-container"
+                style="position: absolute; top: 15%; left: 85%; transform: translate(-50%, -50%); display:flex; justify-content:center; align-items:center; width:220px; height:220px; cursor:pointer; transition: transform 0.3s; z-index:10;"
+                onmouseover="this.style.transform='translate(-50%, -50%) scale(1.08)'"
+                onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'">
+                <div class="massive-mic-btn"
+                  style="width:140px; height:140px; font-size:3rem; cursor:pointer; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+                  📄
+                </div>
+                <input type="file" style="display:none;" accept=".txt,.pdf,.doc,.docx"
+                  onchange="handleFileUpload(event)">
+              </label>
+
+              <!-- Type Orb (Bottom-Center) -->
+              <div title="Type Problem" class="voice-orb-container" onclick="typeProblem()"
+                style="position: absolute; top: 100%; left: 50%; transform: translate(-50%, -50%); display:flex; justify-content:center; align-items:center; width:220px; height:220px; cursor:pointer; transition: transform 0.3s; z-index:10;"
+                onmouseover="this.style.transform='translate(-50%, -50%) scale(1.08)'"
+                onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'">
+                <div class="massive-mic-btn"
+                  style="width:140px; height:140px; font-size:3rem; cursor:pointer; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+                  ✏️
+                </div>
+              </div>
+            </div>
+
+            <!-- Immediate Results Box -->
+            <div class="hero-result-panel" id="heroResultPanel"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works (Brief) -->
+    <section class="section" style="background:var(--white);">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag" data-i18n="howTag">Simple Process</span>
+          <h2 data-i18n="howTitle">How It Works</h2>
+          <p data-i18n="howDesc">Three easy steps to get the legal help you need.</p>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card fade-in">
+            <div class="step-number">1</div>
+            <div class="step-icon">🗣️</div>
+            <h3 data-i18n="step1Title">Describe Your Problem</h3>
+            <p data-i18n="step1Desc">Use voice or text to explain your legal situation in your preferred language.</p>
+          </div>
+          <div class="step-card fade-in">
+            <div class="step-number">2</div>
+            <div class="step-icon">🤖</div>
+            <h3 data-i18n="step2Title">AI Classifies Your Case</h3>
+            <p data-i18n="step2Desc">Our AI analyzes your description and classifies the case type with a confidence
+              score.</p>
+          </div>
+          <div class="step-card fade-in">
+            <div class="step-number">3</div>
+            <div class="step-icon">🤝</div>
+            <h3 data-i18n="step3Title">Get Matched</h3>
+            <p data-i18n="step3Desc">Connect with a verified lawyer specializing in your case type, near your location.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag" data-i18n="featTag">Why Choose Us</span>
+          <h2 data-i18n="featTitle">Powerful Features</h2>
+          <p data-i18n="featDesc">Built for the people, powered by cutting-edge AI.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🎤</div>
+            <h3>Voice Input</h3>
+            <p>Speak your legal issue in English or Bengali. Our speech-to-text AI understands you.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🧠</div>
+            <h3>AI Classification</h3>
+            <p>Advanced NLP classifies your case into the right category with a confidence score.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon">👨‍⚖️</div>
+            <h3>Verified Lawyers</h3>
+            <p>All lawyers on our platform are verified with bar council registrations.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🔒</div>
+            <h3>Encrypted & Secure</h3>
+            <p>Your data is encrypted end-to-end. Privacy is our top priority.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🌐</div>
+            <h3>Multi-Language</h3>
+            <p>Available in English and Bengali with more languages coming soon.</p>
+          </div>
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🚨</div>
+            <h3>Emergency Support</h3>
+            <p>One-tap access to emergency legal helplines available 24/7.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Platform Capabilities -->
+    <section class="section" style="background:var(--gray-50);">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag">Explore More</span>
+          <h2>Platform Capabilities</h2>
+          <p>Discover the various ways Nyaya Stambha empowers citizens and legal experts.</p>
+        </div>
+        <div class="features-grid">
+          <!-- 1 -->
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🤖</div>
+            <h3>Legal Guidance from AI</h3>
+            <p>Here, people can chat with our AI chatbot acting as a legal guardian. It guides victims step-by-step to
+              understand the complexities of their legal problems.</p>
+          </div>
+          <!-- 2 -->
+          <div class="feature-card fade-in">
+            <div class="feature-icon">👨‍⚖️</div>
+            <h3>Legal Guidance from Experts</h3>
+            <p>Connect with physical experts via chat, audio, or video call. Describe your problem, and our AI will
+              identify the case type, find the perfect advocate, hand over the context, and connect you instantly.</p>
+          </div>
+          <!-- 3 -->
+          <div class="feature-card fade-in">
+            <div class="feature-icon">📚</div>
+            <h3>Similar Case History</h3>
+            <p>Upload documents or search our registry. The AI retrieves similar past cases, displaying full history,
+              dates, winning parties, advocates involved, resolution time, approximate costs, court names, and advocate
+              ratings.</p>
+          </div>
+          <!-- 4 -->
+          <div class="feature-card fade-in">
+            <div class="feature-icon">💼</div>
+            <h3>Lawyers Drawer</h3>
+            <p>An exclusive dashboard for lawyers. Upload case details, get AI suggestions, and manage all cases,
+              evidence, schedules, and hearings efficiently in one unified space.</p>
+          </div>
+          <!-- 5 -->
+          <div class="feature-card fade-in">
+            <div class="feature-icon">✨</div>
+            <h3>Online Case Assistant</h3>
+            <p>Our dedicated AI assistant is by your side throughout the entire process, analyzing and helping to
+              resolve your case until it's officially closed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section" style="background:var(--white);">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag">Real Reviews & Ratings</span>
+          <h2>Trusted by Citizens & Advocates</h2>
+          <p>Discover how Nyaya Stambha empowers legal research, case solving, and expert advocacy.</p>
+        </div>
+        <div class="testimonials-grid">
+          <!-- Review 1: Advocate -->
+          <div class="testimonial-card fade-in">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="star-rating" style="letter-spacing:2px; font-size:0.95rem;">⭐⭐⭐⭐⭐</div>
+              <span class="review-role advocate-badge">Advocate</span>
+            </div>
+            <p>"The integrated <strong>Legal Library</strong> and automated bare act cross-referencing on Nyaya Stambha have completely streamlined my legal practice. Summarizing complex case precedents and drafting multi-page case files takes seconds now. Absolutely phenomenal rating!"</p>
+            <div class="testimonial-author">
+              <img src="assets/reviews/advocate1.jpg" alt="Advocate Rajesh Sharma" class="testimonial-img" />
+              <div>
+                <h4>Adv. Rajesh Sharma</h4><span>High Court Advocate · Delhi</span>
+              </div>
+            </div>
+          </div>
+          <!-- Review 2: Citizen -->
+          <div class="testimonial-card fade-in">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="star-rating" style="letter-spacing:2px; font-size:0.95rem;">⭐⭐⭐⭐⭐</div>
+              <span class="review-role citizen-badge">Citizen</span>
+            </div>
+            <p>"I was overwhelmed when trying to understand the process for <strong>case solving</strong> and filing an e-FIR for a cyber fraud issue. Nyaya Stambha guided me perfectly and instantly matched me with the right verified advocate. Highly recommended to every citizen!"</p>
+            <div class="testimonial-author">
+              <img src="assets/reviews/citizen1.png" alt="Priyanka Sen" class="testimonial-img" />
+              <div>
+                <h4>Priyanka Sen</h4><span>Teacher · Kolkata</span>
+              </div>
+            </div>
+          </div>
+          <!-- Review 3: Advocate -->
+          <div class="testimonial-card fade-in">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="star-rating" style="letter-spacing:2px; font-size:0.95rem;">⭐⭐⭐⭐⭐</div>
+              <span class="review-role advocate-badge">Advocate</span>
+            </div>
+            <p>"<strong>Finding advocates</strong> and connecting with genuine clients seeking specialized legal help has never been this transparent. The real-time judicial synchronization and AI case summarization act as an indispensable digital associate for my daily workflow."</p>
+            <div class="testimonial-author">
+              <img src="assets/reviews/advocate2.png" alt="Advocate Vikram Rathore" class="testimonial-img" />
+              <div>
+                <h4>Adv. Vikram Rathore</h4><span>Corporate Counsel · Mumbai</span>
+              </div>
+            </div>
+          </div>
+          <!-- Review 4: Citizen -->
+          <div class="testimonial-card fade-in">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="star-rating" style="letter-spacing:2px; font-size:0.95rem;">⭐⭐⭐⭐⭐</div>
+              <span class="review-role citizen-badge">Citizen</span>
+            </div>
+            <p>"Filing a formal legal notice for a persistent consumer dispute was handled smoothly and professionally. The platform capabilities and educational resources clarified my rights effortlessly. My rating towards this website is a solid 10/10!"</p>
+            <div class="testimonial-author">
+              <img src="assets/reviews/citizen2.png" alt="Ananya Deshmukh" class="testimonial-img" />
+              <div>
+                <h4>Ananya Deshmukh</h4><span>Startup Founder · Pune</span>
+              </div>
+            </div>
+          </div>
+          <!-- Review 5: Advocate -->
+          <div class="testimonial-card fade-in">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="star-rating" style="letter-spacing:2px; font-size:0.95rem;">⭐⭐⭐⭐⭐</div>
+              <span class="review-role advocate-badge">Advocate</span>
+            </div>
+            <p>"Nyaya Stambha successfully bridges the gap between complex constitutional precedents and citizen accessibility. The interactive bare acts library loaded into our workspace is a premium resource. An essential portal for the entire legal fraternity."</p>
+            <div class="testimonial-author">
+              <img src="assets/reviews/advocate3.jpg" alt="Senior Advocate Alejandro Ramirez" class="testimonial-img" />
+              <div>
+                <h4>Adv. Alejandro Ramirez</h4><span>Senior Legal Counsel · Bengaluru</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="navbar-logo" style="margin-bottom:4px;">
+              <div class="logo-icon">⚖</div>
+              <span>Nyaya <span class="logo-accent">Stambha</span></span>
+            </div>
+            <p data-i18n="footerDesc">Bridging the gap between citizens and justice through AI-powered legal assistance.
+            </p>
+          </div>
+          <div>
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="#" onclick="navigateTo('home')">Home</a></li>
+              <li><a href="#" onclick="navigateTo('how-it-works')">How It Works</a></li>
+              <li><a href="#" onclick="navigateTo('get-help')">Get Legal Help</a></li>
+              <li><a href="#" onclick="navigateTo('faq')">FAQs</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <ul>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+              <li><a href="#">Disclaimer</a></li>
+              <li><a href="#">Cookie Policy</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Contact</h4>
+            <ul>
+              <li><a href="#">support@nyayastambha.in</a></li>
+              <li><a href="#">+91 1800-XXX-XXXX</a></li>
+              <li><a href="#">Kolkata, India</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p data-i18n="footerDisclaimer">© 2026 Nyaya Stambha. All rights reserved. This platform provides legal
+            information, not legal advice.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ===== HOW IT WORKS PAGE ===== -->
+  <div class="page" id="page-how-it-works">
+    <section class="section legal-help-section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag" data-i18n="howTag">Simple Process</span>
+          <h2 data-i18n="howTitle">How It Works</h2>
+          <p>Our AI-powered platform makes accessing legal help simple and accessible for every citizen.</p>
+        </div>
+        <div class="steps-grid" style="margin-bottom:60px;">
+          <div class="step-card fade-in">
+            <div class="step-number">1</div>
+            <div class="step-icon">🗣️</div>
+            <h3>Describe Your Problem</h3>
+            <p>Use our voice input in English or Bengali, or type your legal issue. Our system is designed for
+              ease-of-use.</p>
+          </div>
+          <div class="step-card fade-in">
+            <div class="step-number">2</div>
+            <div class="step-icon">🤖</div>
+            <h3>AI Classifies Your Case</h3>
+            <p>Our NLP engine classifies your case into categories like Family Law, Criminal Law, Property disputes, and
+              more with a confidence score.</p>
+          </div>
+          <div class="step-card fade-in">
+            <div class="step-number">3</div>
+            <div class="step-icon">🤝</div>
+            <h3>Get Matched with a Lawyer</h3>
+            <p>If AI confidence is ≥ 60%, you get matched with verified lawyers. Otherwise, a human legal expert reviews
+              your case within 24 hours.</p>
+          </div>
+        </div>
+        <div style="text-align:center;" class="fade-in">
+          <button class="btn-primary" onclick="navigateTo('get-help')">⚖️ Try It Now – Get Legal Help</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== GET LEGAL HELP PAGE ===== -->
+  <div class="page" id="page-get-help">
+    <section class="section legal-help-section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag" data-i18n="helpTag">Get Assistance</span>
+          <h2 data-i18n="helpTitle">Get Legal Help</h2>
+          <p data-i18n="helpDesc">Describe your legal issue using voice or text.</p>
+        </div>
+        <div class="help-form-container fade-in">
+          <!-- Voice Input -->
+          <div class="voice-input-area">
+            <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+              <span class="mic-icon">🎤</span>
+            </button>
+            <p class="mic-label" data-i18n="micLabel">Tap to speak</p>
+          </div>
+          <!-- Language -->
+          <div class="form-group">
+            <label data-i18n="langLabel">Select Language</label>
+            <select id="langSelect">
+              <option value="en">English</option>
+              <option value="bn">Bengali (বাংলা)</option>
+            </select>
+          </div>
+          <!-- Text Input -->
+          <div class="form-group">
+            <label data-i18n="descLabel">Describe Your Legal Issue</label>
+            <textarea id="caseDescription"
+              placeholder="e.g., I need help with a property dispute with my neighbour..."></textarea>
+          </div>
+          <!-- Submit -->
+          <button class="btn-submit" onclick="submitCase()" data-i18n="submitBtn">Analyze & Find Lawyer</button>
+          <!-- Results -->
+          <div class="result-panel" id="resultPanel"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== BLOG PAGE ===== -->
+  <div class="page" id="page-blog">
+    <section class="section legal-help-section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag" data-i18n="blogTag">Legal Awareness</span>
+          <h2 data-i18n="blogTitle">Know Your Rights</h2>
+          <p>Stay informed about your legal rights and recent changes in Indian law.</p>
+        </div>
+        <div class="blog-grid">
+          <div class="blog-card fade-in">
+            <div class="blog-img">📜</div>
+            <div class="blog-content">
+              <div class="blog-date">March 1, 2026</div>
+              <h3>Understanding Your Fundamental Rights Under the Indian Constitution</h3>
+              <p>Every Indian citizen is guaranteed fundamental rights under Articles 14-32. Learn what they mean for
+                you.</p>
+              <span class="read-more">Read More →</span>
+            </div>
+          </div>
+          <div class="blog-card fade-in">
+            <div class="blog-img">🏠</div>
+            <div class="blog-content">
+              <div class="blog-date">February 25, 2026</div>
+              <h3>Property Rights: What Every Homeowner Should Know</h3>
+              <p>From title deeds to encumbrance certificates, a guide to protecting your property rights.</p>
+              <span class="read-more">Read More →</span>
+            </div>
+          </div>
+          <div class="blog-card fade-in">
+            <div class="blog-img">💼</div>
+            <div class="blog-content">
+              <div class="blog-date">February 20, 2026</div>
+              <h3>New Consumer Protection Act 2019: Key Changes You Must Know</h3>
+              <p>The Consumer Protection Act 2019 brings major changes. Learn how it protects you better.</p>
+              <span class="read-more">Read More →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== FAQ PAGE ===== -->
+  <div class="page" id="page-faq">
+    <section class="section legal-help-section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag" data-i18n="faqTag">Common Questions</span>
+          <h2 data-i18n="faqTitle">Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-list fade-in">
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">What is Nyaya Stambha? <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">Nyaya Stambha is an AI-powered legal tech platform that helps citizens find verified
+              lawyers based on their legal issues. Our AI classifies your case and matches you with the right legal
+              expert.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">Is this platform free to use? <span
+                class="arrow">▼</span></div>
+            <div class="faq-answer">The case classification and lawyer matching is free. Lawyer consultation fees are
+              decided by individual lawyers. We also provide free legal aid referrals for eligible citizens under the
+              NALSA scheme.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">How does the AI classify my case? <span
+                class="arrow">▼</span></div>
+            <div class="faq-answer">Our NLP (Natural Language Processing) engine analyzes your description and matches
+              it against legal categories. If the AI is confident (≥60%), you get instant lawyer matches. Otherwise, a
+              human expert reviews your case.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">Are the lawyers on this platform verified? <span
+                class="arrow">▼</span></div>
+            <div class="faq-answer">Yes. Every lawyer on Nyaya Stambha goes through a verification process including bar
+              council registration check, identity verification, and background screening.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">Can I use voice input in Bengali? <span
+                class="arrow">▼</span></div>
+            <div class="faq-answer">Yes! Nyaya Stambha supports voice input in both English and Bengali. Select your
+              language before clicking the microphone button. More languages will be added soon.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">Is my data secure? <span class="arrow">▼</span></div>
+            <div class="faq-answer">Absolutely. All data is encrypted end-to-end using industry-standard encryption. We
+              comply with data protection regulations and never share your personal information without consent.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">What happens in an emergency? <span
+                class="arrow">▼</span></div>
+            <div class="faq-answer">Use the red emergency button (always visible on the bottom-right corner) for
+              immediate access to NALSA helpline (15100), Women Helpline (181), Police (100), and Cyber Crime (1930).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== LAWYER DASHBOARD ===== -->
+  <div class="page" id="page-lawyer-dashboard">
+    <section class="dashboard">
+      <div class="container">
+        <div class="dash-header">
+          <h2>👨‍⚖️ Lawyer Dashboard</h2>
+          <div>
+            <button class="btn-primary" onclick="showLogin('admin')" style="font-size:0.85rem;padding:10px 20px;">Switch
+              to Admin</button>
+            <button class="btn-outline" onclick="navigateTo('home')"
+              style="margin-left:8px;border-color:var(--gray-200);color:var(--gray-700);font-size:0.85rem;padding:10px 20px;">Logout</button>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="dash-sidebar">
+            <div class="profile-section">
+              <div class="profile-avatar">PS</div>
+              <h3>Adv. Priya Sharma</h3>
+              <p class="role">Verified Lawyer · Kolkata</p>
+            </div>
+            <div class="availability-toggle">
+              <span style="font-size:0.85rem;color:var(--gray-500);">Status:</span>
+              <div class="toggle-switch active" id="availToggle" onclick="toggleAvailability()"></div>
+              <span id="availLabel" style="font-size:0.85rem;font-weight:600;color:var(--success);">Available</span>
+            </div>
+            <div style="margin-top:16px;">
+              <p style="font-size:0.8rem;color:var(--gray-500);margin-bottom:8px;font-weight:600;">Specializations</p>
+              <div class="spec-tags">
+                <span class="lawyer-tag">Family Law</span>
+                <span class="lawyer-tag">Divorce</span>
+                <span class="lawyer-tag">Child Custody</span>
+              </div>
+            </div>
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-100);">
+              <p style="font-size:0.85rem;color:var(--gray-500);">⭐ Rating: <strong>4.8</strong></p>
+              <p style="font-size:0.85rem;color:var(--gray-500);margin-top:4px;">📋 Cases: <strong>128</strong></p>
+              <p style="font-size:0.85rem;color:var(--gray-500);margin-top:4px;">📅 Joined: <strong>Jan 2024</strong>
+              </p>
+            </div>
+          </div>
+          <div class="dash-main" id="lawyerCases"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== ADMIN DASHBOARD ===== -->
+  <div class="page" id="page-admin-dashboard">
+    <section class="dashboard">
+      <div class="container">
+        <div class="dash-header">
+          <h2>🛡️ Admin Dashboard</h2>
+          <div>
+            <button class="btn-primary" onclick="showLogin('lawyer')"
+              style="font-size:0.85rem;padding:10px 20px;">Switch to Lawyer</button>
+            <button class="btn-outline" onclick="navigateTo('home')"
+              style="margin-left:8px;border-color:var(--gray-200);color:var(--gray-700);font-size:0.85rem;padding:10px 20px;">Logout</button>
+          </div>
+        </div>
+        <!-- Stats -->
+        <div class="admin-stats fade-in">
+          <div class="admin-stat-card">
+            <div class="stat-icon" style="background:rgba(201,168,76,0.1);">📋</div>
+            <h4>Total Cases</h4>
+            <div class="stat-val" id="statTotal">0</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-icon" style="background:rgba(46,204,113,0.1);">✅</div>
+            <h4>High Confidence</h4>
+            <div class="stat-val" id="statHigh">0</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-icon" style="background:rgba(243,156,18,0.1);">⏳</div>
+            <h4>Pending</h4>
+            <div class="stat-val" id="statPending">0</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-icon" style="background:rgba(52,152,219,0.1);">👨‍⚖️</div>
+            <h4>Lawyers</h4>
+            <div class="stat-val" id="statLawyers">0</div>
+          </div>
+        </div>
+        <!-- Chart -->
+        <div class="chart-container fade-in" style="margin-bottom:28px;">
+          <h3 style="font-size:1.1rem;color:var(--primary);margin-bottom:20px;">📊 Case Types Distribution</h3>
+          <div class="chart-bar-group" id="chartBars"></div>
+        </div>
+        <!-- Case Table -->
+        <div class="dash-card fade-in">
+          <h3 style="font-size:1.1rem;color:var(--primary);margin-bottom:20px;">Case Classifications</h3>
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Case ID</th>
+                  <th>Citizen</th>
+                  <th>Type</th>
+                  <th>Confidence</th>
+                  <th>Status</th>
+                  <th>Override</th>
+                </tr>
+              </thead>
+              <tbody id="adminCaseTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Manage Lawyers -->
+        <div class="dash-card fade-in" style="margin-top:20px;">
+          <h3 style="font-size:1.1rem;color:var(--primary);margin-bottom:20px;">Manage Lawyers</h3>
+          <div class="lawyer-grid" id="adminLawyerGrid">
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== CITIZEN PORTAL PAGE ===== -->
+  <div class="page" id="page-citizen-portal">
+    <section class="portal-section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag">Citizen Dashboard</span>
+          <h2>Citizen Legal Portal</h2>
+          <p>Select an option below to exercise your rights or initiate legal proceedings.</p>
+        </div>
+        <div class="portal-grid">
+          <!-- Option 1 -->
+          <div class="portal-card fade-in" onclick="window.location.href='complaint-launch.html'">
+            <div class="portal-icon">📝</div>
+            <h3>File A Legal Notice</h3>
+            <p>Draft and send an official legal notice to individuals or corporations securely.</p>
+            <div class="portal-card-footer"><span>Proceed</span><span class="arrow">→</span></div>
+          </div>
+          <!-- Option 2 -->
+          <div class="portal-card fade-in" onclick="window.location.href='complaint-launch.html'">
+            <div class="portal-icon">🚨</div>
+            <h3>File an e-FIR</h3>
+            <p>Lodge an electronic First Information Report directly with local police stations.</p>
+            <div class="portal-card-footer"><span>Proceed</span><span class="arrow">→</span></div>
+          </div>
+          <!-- Option 3 -->
+          <div class="portal-card fade-in" onclick="navigateTo('blog')">
+            <div class="portal-icon">⚖️</div>
+            <h3>Want To Know Your Legal Rights</h3>
+            <p>Explore fundamental constitutional rights, consumer protections, and expert blogs.</p>
+            <div class="portal-card-footer"><span>Explore</span><span class="arrow">→</span></div>
+          </div>
+          <!-- Option 4 -->
+          <div class="portal-card fade-in" onclick="toggleChatbot()">
+            <div class="portal-icon">🤖</div>
+            <h3>AI For Ligal Help</h3>
+            <p>Engage with Nyaya Mitra AI for immediate, step-by-step personalized legal guidance.</p>
+            <div class="portal-card-footer"><span>Launch AI</span><span class="arrow">→</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== ADVOCATE PORTAL PAGE ===== -->
+  <div class="page" id="page-advocate-portal">
+    <section class="portal-section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="tag">Advocate Workspace</span>
+          <h2>Advocate Digital Drawer</h2>
+          <p>Access high-powered research tools, intelligent summarization, and live case monitoring.</p>
+        </div>
+        <div class="portal-grid">
+          <!-- Option 1 -->
+          <div class="portal-card fade-in" onclick="openAdvocateModal('library')">
+            <div class="portal-icon">📚</div>
+            <h3>Legal Library</h3>
+            <p>Browse integrated central bare acts, IPC/BNS cross-references, and past case registry.</p>
+            <div class="portal-card-footer"><span>Open Library</span><span class="arrow">→</span></div>
+          </div>
+          <!-- Option 2 -->
+          <div class="portal-card fade-in" onclick="openAdvocateModal('summarize')">
+            <div class="portal-icon">✨</div>
+            <h3>Summarize Your Case</h3>
+            <p>Paste legal documents or evidence notes to automatically generate strategic briefs using AI.</p>
+            <div class="portal-card-footer"><span>Summarize</span><span class="arrow">→</span></div>
+          </div>
+          <!-- Option 3 -->
+          <div class="portal-card fade-in" onclick="navigateTo('lawyer-dashboard'); renderLawyerDashboard();">
+            <div class="portal-icon">📁</div>
+            <h3>Other Case Details</h3>
+            <p>Access submitted evidence files, schedule hearings, and manage incoming client match requests.</p>
+            <div class="portal-card-footer"><span>View Drawer</span><span class="arrow">→</span></div>
+          </div>
+          <!-- Option 4 -->
+          <div class="portal-card fade-in" onclick="openAdvocateModal('updates')">
+            <div class="portal-icon">🔔</div>
+            <h3>Case Updates</h3>
+            <p>Monitor real-time case tracking, court status overrides, and send update alerts to citizens.</p>
+            <div class="portal-card-footer"><span>Track Status</span><span class="arrow">→</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== ADVOCATE INTERACTIVE MODALS ===== -->
+  <div class="modal-overlay" id="advocateFeatureModal">
+    <div class="modal premium-feature-modal" style="max-width:650px; text-align:left;">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--gray-100); padding-bottom:16px; margin-bottom:20px;">
+        <h2 id="advFeatureTitle" style="color:var(--primary); font-family:var(--font-display); font-size:1.5rem;">Legal Feature</h2>
+        <button onclick="closeAdvocateModal()" style="background:none; border:none; font-size:1.8rem; color:var(--gray-400); cursor:pointer; padding:0 8px;">×</button>
+      </div>
+      <div id="advFeatureContent"></div>
+    </div>
+  </div>
+
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <h2 id="loginTitle">Login</h2>
+      <p class="subtitle">Access your dashboard securely</p>
+      <input type="hidden" id="loginRole" value="lawyer" />
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••" />
+      </div>
+      <button class="btn-submit" onclick="doLogin()">Sign In</button>
+      <p style="text-align:center;margin-top:16px;font-size:0.85rem;color:var(--gray-500);cursor:pointer;"
+        onclick="closeLogin()">Cancel</p>
+      <p style="text-align:center;margin-top:8px;font-size:0.75rem;color:var(--gray-300);">Demo: Use any email &amp;
+        password</p>
+    </div>
+  </div>
+
+  <!-- ===== EMERGENCY FLOATING BUTTON ===== -->
+  <button class="emergency-btn" onclick="emergencyCall()" title="Emergency Legal Helpline"
+    aria-label="Emergency">🚨</button>
+
+  <!-- ===== CHATBOT ===== -->
+  <button class="chatbot-toggle" onclick="toggleChatbot()" title="Legal Chatbot" aria-label="Chatbot">💬</button>
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header" style="justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-size:1.4rem;">🤖</span>
+        <div>
+          <h4>Nyaya Mitra AI</h4>
+          <span>Sahayak Legal Assistant</span>
+        </div>
+      </div>
+      <button onclick="toggleChatbot()" style="background:none; border:none; color:var(--white); font-size:1.2rem; cursor:pointer; padding:0 4px;">✕</button>
+    </div>
+    <iframe src="https://57b98e4e-b99b-4fa5-8b9c-522b9c552609-00-2dontfj7ek5gq.sisko.replit.dev/" style="width:100%; height:100%; border:none; flex:1; min-height:450px;" allow="microphone"></iframe>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Render admin lawyer grid
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('adminLawyerGrid');
+      if (grid) {
+        grid.innerHTML = mockLawyers.map(l => `
+        <div class="lawyer-card">
+          <div class="lawyer-card-header">
+            <div class="lawyer-avatar">${l.initials}</div>
+            <div><h4>${l.name}</h4><span>⭐ ${l.rating} · ${l.experience}</span></div>
+          </div>
+          <div class="lawyer-tags">${l.specializations.map(s => '<span class="lawyer-tag">' + s + '</span>').join('')}</div>
+          <div class="lawyer-location">📍 ${l.location} · ${l.available ? '<span style="color:var(--success)">Available</span>' : '<span style="color:var(--danger)">Unavailable</span>'}</div>
+        </div>
+      `).join('');
+      }
+    });
+  </script>
+</body>
+
+</html>

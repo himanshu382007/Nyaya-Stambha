@@ -1,0 +1,59 @@
+# Implementation Plan: Django & Groq AI Backend
+
+You've elected to pivot from the mock backend to a robust, highly-performant Python backend using **Django** and **Django REST Framework (DRF)**. To power the intelligence, we will utilize the **Groq API** (known for its blazing-fast inference speeds) to classify cases and parse complex legal documents in real-time.
+
+## User Decisions Confirmed
+- **Groq Model:** We will default to `llama3-70b-8192` for high-quality legal parsing and classification logic.
+- **Database:** SQLite will be used for rapid development.
+- **Cleanup:** The old Node.js `backend/` folder will be completely deleted safely.
+
+---
+
+## Proposed Changes
+
+### Phase 0: Workspace Cleanup
+- Delete the legacy Node.js `backend` directory inside `e:\nyaya-stambha` to prevent any confusion and clear up workspace storage.
+
+### Phase 1: Django API Foundation
+We will initialize the Django project and configure it securely to accept API requests from your existing frontend.
+- Generate a new Django project `nyayabackend` and an app named `api`.
+- Setup **Django REST Framework** (DRF) and **CORS Headers** to safely link with your `localhost:3000` or `5500` static frontend.
+- Setup **JWT Authentication** (`djangorestframework-simplejwt`) so Citizens, Lawyers, and Admins can log in securely.
+- Define core SQLite Database Models: `User`, `LawyerProfile`, `Case`.
+
+#### [DELETE] `backend/`
+#### [NEW] `nyayabackend/manage.py`
+#### [NEW] `api/models.py`
+#### [NEW] `api/views.py`
+
+---
+
+### Phase 2: Groq AI & File Parsing Integration
+This is the core functional brain of Nyaya-Stambha. Instead of simple mock algorithms, we will rely on Groq.
+- **File Handlers**: Install `PyMuPDF` and `python-docx` to extract text from user-uploaded legal problem files securely.
+- **Groq Classifier Services**: Construct a `classifier.py` service. It will accept incoming text, inject it into a highly rigid zero-shot prompt using the `groq` python wrapper, and force the model to respond in JSON formatting indicating the matched `category` (e.g. Family Law, Criminal Law) and `confidence` scope.
+
+#### [NEW] `api/services/groq_classifier.py`
+#### [NEW] `api/services/file_parser.py`
+
+---
+
+### Phase 3: Frontend Wiring (`app.js`)
+Strip out all the static arrays (`mockLawyers`, `mockCases`, Local `classifyCase()`) originally housed inside `js/app.js` and securely stitch the UI to our Python endpoints.
+- **Endpoints Strategy**: Update the `submitHeroCase(desc)` action to execute a `fetch('http://localhost:8000/api/cases/')` API call instead of using the local static dictionary.
+- **File Upload Path**: Change `handleFileUpload(event)` to submit a `FormData` block strictly to `POST /api/cases/upload/`.
+- Ensure the dynamic tables in the Dashboard populate from the backend.
+
+#### [MODIFY] `js/app.js`
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Boot the Python server using `python manage.py runserver` and utilize browser tests.
+- Verify migrations run clean on the SQLite DB.
+- Fire cURL or `requests` directly to the `/api/cases/` endpoint to confirm the Groq API processes text under 500ms and returns cleanly segmented JSON.
+
+### Manual Verification
+- We will fully submit a written problem (both by Voice and by Document) via the Hero interface to verify the python server parses it, classifies it accurately using Groq, and updates the immediate results box on the screen.
